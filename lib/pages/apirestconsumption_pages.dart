@@ -9,19 +9,17 @@ class ApiRestConsumption extends StatefulWidget {
 }
 
 class _ApiRestConsumptionState extends State<ApiRestConsumption> {
-
   Dio _dio;
   final _controller = TextEditingController();
-  var _search='';
-  var _price='';
-  var _name='';
+  var _search = '';
+  var _price = '';
+  var _name = '';
   //List<Brands> _list = [];
   ImageProvider _image = NetworkImage('https://via.placeholder.com/100');
-  var _link='';
- 
+  var _link = '';
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     BaseOptions options = BaseOptions(
       baseUrl: "https://makeup-api.herokuapp.com/api/v1/products.json",
@@ -33,86 +31,76 @@ class _ApiRestConsumptionState extends State<ApiRestConsumption> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar : AppBar(
-        title : Text('MakeUp API'),
+      appBar: AppBar(
+        title: Text('MakeUp API'),
         backgroundColor: Colors.lightBlue,
       ),
-      body : SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-          child :Column(
-            mainAxisAlignment : MainAxisAlignment.center,
+      body: SingleChildScrollView(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children          : <Widget>[
+            children: <Widget>[
               Text(
                 'Type the Brand',
                 style: TextStyle(
-                  fontSize : 20,
-                  fontWeight : FontWeight.bold,
-                  color : Colors.green
-                ),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green),
               ),
-              SizedBox(height:5),
+              SizedBox(height: 5),
               Container(
-                padding: EdgeInsets.all(20),
-                child :TextField(
-                controller: _controller,                           
-              )
-              ),
-
+                  padding: EdgeInsets.all(20),
+                  child: TextField(
+                    controller: _controller,
+                  )),
               MaterialButton(
-                onPressed : (){
+                onPressed: () {
                   getMakeUp();
                 },
-                color : Colors.green,
-                child : Text(
+                color: Colors.green,
+                child: Text(
                   'Search',
                   style: TextStyle(
-                    fontSize : 16,
-                    fontWeight: FontWeight.bold,
-                    color : Colors.orange
-                  ),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange),
                 ),
-              
               ),
-
               SizedBox(
-                height : 100,
-                width :100,
-                child : CircleAvatar(
-                  backgroundImage: _image,
-                )
-              ),
-              Text(
-                'Name : $_name'
-              ),
-              Text(
-                'Price : $_price'
-              ),
-              Text(
-                'Link : $_link'
-              )
-
+                  height: 100,
+                  width: 100,
+                  child: CircleAvatar(
+                    backgroundImage: _image,
+                  )),
+              Text('Name : $_name'),
+              Text('Price : $_price'),
+              Text('Link : $_link')
             ],
-          )
-        ),
-      
+          )),
     );
   }
 
-  void getMakeUp() async{
-    Response response = await _dio.get('?brand={$_controller}');
-    var product = response.data['data'];
+  void getMakeUp() async {
+    // Tem que botar a url base aqui
+    Response response = await _dio.get(
+      '/',
+      // caso queira mandar alguma query manda assim
+      // melhor do que escrever ?brand=_controller.value.text
+      // caso queira acessar o texto do controller tem que pegar por .value.text
+      queryParameters: {"brand": _controller.value.text},
+    );
 
-   // _list = json.decode(product['brand']).map((data)=> Brands.fromJson(data)).toList();
+    // a resposta da api é uma lista de json, se quiser pegar o primeiro usa assim
+    var product = response.data[0];
+
+    // _list = json.decode(product['brand']).map((data)=> Brands.fromJson(data)).toList();
 
     setState(() {
-      _name = product['name'].toString();
-      _price = product['price'].toString();
+      _name = product['name'];
+      _price = product['price'];
       _image = NetworkImage(product['image_link']);
-      _link = product['product_link'].toString();
+      _link = product['product_link'];
     });
-
-    
   }
-
 }
