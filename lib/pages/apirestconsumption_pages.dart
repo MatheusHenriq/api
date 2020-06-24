@@ -82,7 +82,6 @@ class _ApiRestConsumptionState extends State<ApiRestConsumption> {
   }
 
   void getMakeUp() async {
-    // Tem que botar a url base aqui
     Response response = await _dio.get(
       '/',
       // caso queira mandar alguma query manda assim
